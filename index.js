@@ -1,6 +1,6 @@
 const express = require('express')
 const routerApi = require('./routes')
-const { logErrors, errorHandler } = require('../middlewares/error.handler')
+const { logErrors, errorHandler, boomErrorHandler } = require('./middlewares/error.handler')
 
 
 // 0. Init server - initial conf
@@ -15,6 +15,7 @@ routerApi(app)
 
 // 2. Middlewares
 app.use(logErrors)
+app.use(boomErrorHandler)
 app.use(errorHandler)
 
 

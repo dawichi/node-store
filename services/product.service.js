@@ -1,4 +1,5 @@
 const faker = require('faker')
+const boom = require('@hapi/boom')
 
 class ProductsService {
 
@@ -7,6 +8,7 @@ class ProductsService {
 		this.generate()
 	}
 
+
 	generate() {
 		const limit = 100
 		for (let index = 0; index < limit; index++) {
@@ -14,10 +16,13 @@ class ProductsService {
 				id: faker.datatype.uuid(),
 				name: faker.commerce.productName(),
 				price: parseInt(faker.commerce.price(), 10),
-				image: faker.image.imageUrl()
+				image: faker.image.imageUrl(),
+				isBlock: faker.datatype.boolean()
 			})
 		}
 	}
+
+
 	async create(data) {
 		const newProduct = {
 			id: faker.datatype.uuid(),
@@ -26,6 +31,7 @@ class ProductsService {
 		this.products.push(newProduct)
 		return newProduct
 	}
+
 
 	async find() {
 		return new Promise((resolve, reject) => {
@@ -36,14 +42,23 @@ class ProductsService {
 		return this.products
 	}
 
+
 	async findOne(id) {
-		return this.products.find(item => item.id === id)
+		const product = this.products.find(item => item.id === id)
+		if (!product) {
+			throw boom.notFound('Product not found')
+		}
+		if (product.isBlock) {
+			throw boom.conflict('Product is blocked')
+		}
+		return product
 	}
+
 
 	async update(id, changes) {
 		const index = this.products.findIndex(item => item.id === id)
 		if (index === -1) {
-			throw new Error('Product not found')
+			throw boom.notFound('Product not found')
 		}
 		const product = this.products[index]
 		this.products[index] = {
@@ -53,10 +68,12 @@ class ProductsService {
 		return this.products[index]
 	}
 
+
 	async delete(id) {
 		const index = this.products.findIndex(item => item.id === id)
 		if (index === -1) {
-			throw new Error('Product not found')
+			// throw new Error('Product not found')
+			throw boom.notFound('Product not found')
 		}
 		this.products.splice(index, 1)
 		return {
@@ -64,5 +81,6 @@ class ProductsService {
 		}
 	}
 }
+
 
 module.exports = ProductsService

@@ -1,5 +1,5 @@
 const express = require('express')
-const productsRouter = require('./products')
+const productsRouter = require('./products.routes')
 // const usersRouter = require('./users')
 
 const routerApi = (app) => {
