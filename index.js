@@ -13,7 +13,7 @@ app.use(express.json())
 routerApi(app)
 
 
-// 2. Middlewares
+// 2. Error middlewares
 app.use(logErrors)
 app.use(boomErrorHandler)
 app.use(errorHandler)
