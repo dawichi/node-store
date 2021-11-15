@@ -1,16 +1,24 @@
 const express = require('express')
 const routerApi = require('./routes')
+const { logErrors, errorHandler } = require('../middlewares/error.handler')
 
-const app = express()
+
+// 0. Init server - initial conf
 const port = 3400
-
+const app = express()
 app.use(express.json())
 
-routerApi(app)
-const router = express.Router()
 
+// 1. Routes
+routerApi(app)
+
+
+// 2. Middlewares
+app.use(logErrors)
+app.use(errorHandler)
+
+
+// 3. Start server
 app.listen(port, () => {
 	console.log(`Server running on port ${port}`)
 })
-
-module.exports = router
